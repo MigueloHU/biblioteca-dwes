@@ -1,21 +1,23 @@
 <?php
-require_once __DIR__ . "/config/config.php";
 require_once __DIR__ . "/includes/auth.php";
-requireLogin();
-
+$titulo = "Inicio | Biblioteca";
 require_once __DIR__ . "/includes/header.php";
-require_once __DIR__ . "/includes/navbar.php";
 ?>
 
-<div class="container py-4">
-  <h1 class="h4">Listado general (base)</h1>
-  <p class="text-muted mb-3">En la siguiente fase cargaremos los libros desde la base de datos.</p>
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4 text-center">
+        <h1 class="h4 mb-3">Bienvenido, <?php echo htmlspecialchars($_SESSION["nombre"]); ?></h1>
 
-  <div class="alert alert-info">
-    Sesión activa. Ya puedes acceder a las secciones según tu perfil.
+        <p class="text-muted mb-4">
+          Has iniciado sesión con: <strong><?php echo htmlspecialchars($_SESSION["email"]); ?></strong>
+        </p>
+
+        <a class="btn btn-danger" href="logout.php">Cerrar sesión</a>
+      </div>
+    </div>
   </div>
-
-  <button class="btn btn-danger" disabled>Listado PDF (se implementa en Fase 5)</button>
 </div>
 
 <?php require_once __DIR__ . "/includes/footer.php"; ?>
