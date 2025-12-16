@@ -1,0 +1,13 @@
+# Archivos de configuración local
+config/config.php
+
+# Archivos temporales
+*.log
+
+# Dependencias
+vendor/
+node_modules/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
