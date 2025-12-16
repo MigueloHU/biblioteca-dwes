@@ -2,8 +2,8 @@
 -- Base de datos: bdbiblioteca
 -- ------------------------------------------------------
 DROP DATABASE IF EXISTS bdbiblioteca;
-CREATE DATABASE bdbbiblioteca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE bdbbiblioteca;
+CREATE DATABASE bdbiblioteca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE bdbiblioteca;
 
 -- ------------------------------------------------------
 -- Tabla: profesores (usuarios)
