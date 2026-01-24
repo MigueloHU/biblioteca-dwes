@@ -1,16 +1,4 @@
-# Archivos de configuración local
-config/config.php
-
-# Archivos temporales
+.vscode/
 *.log
-
-# Dependencias
-vendor/
-node_modules/
-
-# Archivos del sistema
-.DS_Store
-Thumbs.db
-
-#Token
-token.txt
+*.tmp
+*.bak
