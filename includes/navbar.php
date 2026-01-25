@@ -32,6 +32,9 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo APP_URL; ?>/reservas/index.php">Reservas</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo APP_URL; ?>/perfil.php">Mi perfil</a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-3 text-white">
