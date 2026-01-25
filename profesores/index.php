@@ -18,6 +18,8 @@ $profes = $stmt->fetchAll();
     Gestión de usuarios (alta, edición y desactivación).
   </div>
   <a class="btn btn-primary" href="<?php echo APP_URL; ?>/profesores/crear.php">+ Nuevo profesor</a>
+  <a class="btn btn-outline-primary" href="<?php echo APP_URL; ?>/profesores/importar.php">Importar Excel</a>
+
 </div>
 
 <?php if (isset($_GET["ok"])): ?>
