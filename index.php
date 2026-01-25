@@ -44,8 +44,10 @@ $libros = $stmt->fetchAll();
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="h4 m-0">Libros</h2>
-    <a class="btn btn-primary" href="<?php echo APP_URL; ?>/libros/crear.php">+ Nuevo libro</a>
+<?php if (($_SESSION["perfil"] ?? "") === "ADMIN"): ?>
+  <a class="btn btn-primary" href="<?php echo APP_URL; ?>/libros/crear.php">+ Nuevo libro</a>
+<?php endif; ?>
+
 </div>
 
 <div class="card shadow-sm">

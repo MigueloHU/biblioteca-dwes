@@ -18,6 +18,12 @@ require_once __DIR__ . "/../config/config.php";
     <body class="bg-light d-flex flex-column min-vh-100">
 
 <?php require_once __DIR__ . "/navbar.php"; ?>
+<?php if (isset($_GET["sin_permiso"])): ?>
+  <div class="alert alert-warning">
+    No tienes permiso para acceder a esa sección.
+  </div>
+<?php endif; ?>
+
 
 <header class="py-4">
 ...
