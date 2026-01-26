@@ -20,7 +20,7 @@ $sqlTotal = "SELECT COUNT(*) FROM libros";
 $totalLibros = (int)$pdo->query($sqlTotal)->fetchColumn();
 $totalPaginas = (int)ceil($totalLibros / $porPagina);
 
-// Libros de la página actual + disponibilidad calculada por préstamos activos
+// Libros + disponibilidad calculada por préstamos activos
 $sql = "SELECT
           l.id, l.isbn, l.titulo, l.fecha_publicacion, l.editorial, l.precio, l.portada,
           CASE
@@ -41,13 +41,25 @@ $stmt->bindValue(":inicio", $inicio, PDO::PARAM_INT);
 $stmt->bindValue(":cantidad", $porPagina, PDO::PARAM_INT);
 $stmt->execute();
 $libros = $stmt->fetchAll();
+
+require_once __DIR__ . "/config/log.php";
+registrar_log($pdo, "VISUALIZACION", "libros", null, (int)$_SESSION["usuario_id"], "Listado principal de libros");
+
+
+
+$esAdmin = (($_SESSION["perfil"] ?? "") === "ADMIN");
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-<?php if (($_SESSION["perfil"] ?? "") === "ADMIN"): ?>
-  <a class="btn btn-primary" href="<?php echo APP_URL; ?>/libros/crear.php">+ Nuevo libro</a>
+<?php if (isset($_GET["sin_permiso"])): ?>
+  <div class="alert alert-warning">No tienes permiso para acceder a esa sección.</div>
 <?php endif; ?>
 
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 m-0">Libros</h2>
+
+    <?php if ($esAdmin): ?>
+      <a class="btn btn-primary" href="<?php echo APP_URL; ?>/libros/crear.php">+ Nuevo libro</a>
+    <?php endif; ?>
 </div>
 
 <div class="card shadow-sm">
@@ -108,6 +120,7 @@ $libros = $stmt->fetchAll();
                                 </td>
 
                                 <td class="text-end">
+                                    <!-- Para todos -->
                                     <a class="btn btn-sm btn-outline-secondary"
                                        href="<?php echo APP_URL; ?>/libros/detalle.php?id=<?php echo urlencode($l["id"]); ?>">Ver</a>
 
@@ -125,11 +138,14 @@ $libros = $stmt->fetchAll();
                                         </a>
                                     <?php endif; ?>
 
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       href="<?php echo APP_URL; ?>/libros/editar.php?id=<?php echo urlencode($l["id"]); ?>">Editar</a>
+                                    <!-- Solo ADMIN -->
+                                    <?php if ($esAdmin): ?>
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="<?php echo APP_URL; ?>/libros/editar.php?id=<?php echo urlencode($l["id"]); ?>">Editar</a>
 
-                                    <a class="btn btn-sm btn-outline-danger"
-                                       href="<?php echo APP_URL; ?>/libros/eliminar.php?id=<?php echo urlencode($l["id"]); ?>">Eliminar</a>
+                                        <a class="btn btn-sm btn-outline-danger"
+                                           href="<?php echo APP_URL; ?>/libros/eliminar.php?id=<?php echo urlencode($l["id"]); ?>">Eliminar</a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

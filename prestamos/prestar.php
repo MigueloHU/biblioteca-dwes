@@ -19,11 +19,11 @@ if ($profesorId <= 0) {
 try {
     $pdo->beginTransaction();
 
-    // 1) Comprobar estado del libro
+    // 1) Comprobar que el libro existe y su estado actual
     $sqlLibro = "SELECT id, titulo, estado
-                FROM libros
-                WHERE id = :id
-                LIMIT 1";
+                 FROM libros
+                 WHERE id = :id
+                 LIMIT 1";
     $stmt = $pdo->prepare($sqlLibro);
     $stmt->execute([":id" => $libroId]);
     $libro = $stmt->fetch();
@@ -34,13 +34,33 @@ try {
         exit;
     }
 
+    // 2) Comprobar por BD (fuente de verdad): ¿ya hay un préstamo ACTIVO para este libro?
+    // Esto evita incoherencias si libros.estado estuviera desincronizado.
+    $sqlActivo = "SELECT COUNT(*)
+                  FROM prestamos
+                  WHERE libro_id = :libro_id AND estado = 'ACTIVO'";
+    $stmt = $pdo->prepare($sqlActivo);
+    $stmt->execute([":libro_id" => $libroId]);
+    $hayActivo = ((int)$stmt->fetchColumn() > 0);
+
+    if ($hayActivo) {
+        // Aseguramos coherencia del campo estado (por si acaso)
+        $stmt = $pdo->prepare("UPDATE libros SET estado = 'PRESTADO' WHERE id = :id");
+        $stmt->execute([":id" => $libroId]);
+
+        $pdo->commit();
+        header("Location: " . APP_URL . "/index.php?error_prestamo=1");
+        exit;
+    }
+
+    // 3) Comprobar estado del libro (si no está DISPONIBLE, no prestar)
     if ($libro["estado"] !== "DISPONIBLE") {
         $pdo->rollBack();
         header("Location: " . APP_URL . "/index.php?error_prestamo=1");
         exit;
     }
 
-    // 2) Insertar préstamo
+    // 4) Insertar préstamo ACTIVO
     $sqlPrestamo = "INSERT INTO prestamos (profesor_id, libro_id, fecha_inicio, estado)
                     VALUES (:profesor_id, :libro_id, NOW(), 'ACTIVO')";
     $stmt = $pdo->prepare($sqlPrestamo);
@@ -49,7 +69,7 @@ try {
         ":libro_id" => $libroId
     ]);
 
-    // 3) Marcar libro como PRESTADO
+    // 5) Marcar libro como PRESTADO (coherencia)
     $sqlUpdateLibro = "UPDATE libros SET estado = 'PRESTADO' WHERE id = :id";
     $stmt = $pdo->prepare($sqlUpdateLibro);
     $stmt->execute([":id" => $libroId]);

@@ -2,6 +2,8 @@
 require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../includes/admin.php";
 require_once __DIR__ . "/../config/conexion.php";
+require_once __DIR__ . "/../config/log.php";
+
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: " . APP_URL . "/libros/crear.php");
@@ -65,9 +67,15 @@ try {
         ":precio" => $precio
     ]);
 
+    $nuevoId = (int)$pdo->lastInsertId();
+    registrar_log($pdo, "ALTA", "libros", $nuevoId, (int)$_SESSION["usuario_id"], "Alta de libro: " . $titulo);
+
+
+
+
     header("Location: " . APP_URL . "/libros/crear.php?ok=1");
     exit;
-
+    
 } catch (PDOException $e) {
     // Por ejemplo, si se repite (isbn, ejemplar) por la UNIQUE KEY
     header("Location: " . APP_URL . "/libros/crear.php?error=1");

@@ -2,6 +2,8 @@
 require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../includes/admin.php";
 require_once __DIR__ . "/../config/conexion.php";
+require_once __DIR__ . "/../config/log.php";
+
 
 // Obtener ID
 $id = isset($_GET["id"]) ? (int)$_GET["id"] : 0;
@@ -16,11 +18,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $idPost = (int)($_POST["id"] ?? 0);
 
+    $sqlInfo = "SELECT titulo FROM libros WHERE id = :id LIMIT 1";
+    $stmtInfo = $pdo->prepare($sqlInfo);
+    $stmtInfo->execute([":id" => $idPost]);
+    $info = $stmtInfo->fetch();
+    $tituloLibro = $info ? $info["titulo"] : "";
+
+
     if ($idPost > 0) {
         $sql = "DELETE FROM libros WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([":id" => $idPost]);
     }
+
+    registrar_log($pdo, "BAJA", "libros", $idPost, (int)$_SESSION["usuario_id"], "Baja de libro: " . $tituloLibro);
+
 
     header("Location: " . APP_URL . "/index.php");
     exit;

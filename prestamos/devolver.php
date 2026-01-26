@@ -10,7 +10,7 @@ if ($id <= 0) {
     exit;
 }
 
-// Si POST -> devolver
+// POST -> devolver
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $idPost = (int)($_POST["id"] ?? 0);
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $pdo->beginTransaction();
 
-        // 1) Obtener el préstamo y el libro asociado
+        // 1) Obtener préstamo
         $sqlP = "SELECT id, libro_id, estado
                  FROM prestamos
                  WHERE id = :id
@@ -54,12 +54,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $pdo->prepare($sqlU);
         $stmt->execute([":id" => $idPost]);
 
-        // 3) Poner libro como DISPONIBLE
-        $sqlL = "UPDATE libros
-                 SET estado = 'DISPONIBLE'
-                 WHERE id = :id";
-        $stmt = $pdo->prepare($sqlL);
-        $stmt->execute([":id" => $libroId]);
+        // 3) Coherencia: poner libro DISPONIBLE
+        // (Solo si ya no existe ningún préstamo ACTIVO para ese libro)
+        $sqlActivo = "SELECT COUNT(*)
+                      FROM prestamos
+                      WHERE libro_id = :libro_id AND estado = 'ACTIVO'";
+        $stmt = $pdo->prepare($sqlActivo);
+        $stmt->execute([":libro_id" => $libroId]);
+        $hayActivo = ((int)$stmt->fetchColumn() > 0);
+
+        if (!$hayActivo) {
+            $sqlL = "UPDATE libros
+                     SET estado = 'DISPONIBLE'
+                     WHERE id = :id";
+            $stmt = $pdo->prepare($sqlL);
+            $stmt->execute([":id" => $libroId]);
+        }
 
         $pdo->commit();
 
@@ -75,14 +85,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// GET -> mostrar confirmación (cargar datos)
+// GET -> mostrar confirmación
 $sql = "SELECT p.id, p.estado, p.fecha_inicio,
                l.titulo, l.autor
         FROM prestamos p
         JOIN libros l ON l.id = p.libro_id
         WHERE p.id = :id
         LIMIT 1";
-
 $stmt = $pdo->prepare($sql);
 $stmt->execute([":id" => $id]);
 $p = $stmt->fetch();

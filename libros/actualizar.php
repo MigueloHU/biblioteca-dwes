@@ -2,6 +2,8 @@
 require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../includes/admin.php";
 require_once __DIR__ . "/../config/conexion.php";
+require_once __DIR__ . "/../config/log.php";
+
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: " . APP_URL . "/index.php");
@@ -73,9 +75,10 @@ try {
         ":id" => $id
     ]);
 
+    registrar_log($pdo, "ACTUALIZACION", "libros", $id, (int)$_SESSION["usuario_id"], "Modificación de libro: " . $titulo);
+
     header("Location: " . APP_URL . "/libros/editar.php?id=" . urlencode((string)$id) . "&ok=1");
     exit;
-
 } catch (PDOException $e) {
     header("Location: " . APP_URL . "/libros/editar.php?id=" . urlencode((string)$id) . "&error=1");
     exit;
