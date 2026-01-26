@@ -51,15 +51,20 @@ $esAdmin = (($_SESSION["perfil"] ?? "") === "ADMIN");
 ?>
 
 <?php if (isset($_GET["sin_permiso"])): ?>
-  <div class="alert alert-warning">No tienes permiso para acceder a esa sección.</div>
+    <div class="alert alert-warning">No tienes permiso para acceder a esa sección.</div>
 <?php endif; ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="h4 m-0">Libros</h2>
 
     <?php if ($esAdmin): ?>
-      <a class="btn btn-primary" href="<?php echo APP_URL; ?>/libros/crear.php">+ Nuevo libro</a>
+        <a class="btn btn-primary" href="<?php echo APP_URL; ?>/libros/crear.php">+ Nuevo libro</a>
     <?php endif; ?>
+    <a class="btn btn-outline-danger"
+        href="<?php echo APP_URL; ?>/pdf/libros.php?pagina=<?php echo (int)$pagina; ?>">
+        Generar PDF
+    </a>
+
 </div>
 
 <div class="card shadow-sm">
@@ -122,18 +127,18 @@ $esAdmin = (($_SESSION["perfil"] ?? "") === "ADMIN");
                                 <td class="text-end">
                                     <!-- Para todos -->
                                     <a class="btn btn-sm btn-outline-secondary"
-                                       href="<?php echo APP_URL; ?>/libros/detalle.php?id=<?php echo urlencode($l["id"]); ?>">Ver</a>
+                                        href="<?php echo APP_URL; ?>/libros/detalle.php?id=<?php echo urlencode($l["id"]); ?>">Ver</a>
 
                                     <?php if (($l["disponibilidad"] ?? "") === "DISPONIBLE"): ?>
                                         <a class="btn btn-sm btn-outline-success"
-                                           href="<?php echo APP_URL; ?>/prestamos/prestar.php?libro_id=<?php echo urlencode($l["id"]); ?>">
+                                            href="<?php echo APP_URL; ?>/prestamos/prestar.php?libro_id=<?php echo urlencode($l["id"]); ?>">
                                             Prestar
                                         </a>
                                     <?php else: ?>
                                         <button class="btn btn-sm btn-outline-success" disabled>Prestar</button>
 
                                         <a class="btn btn-sm btn-outline-warning"
-                                           href="<?php echo APP_URL; ?>/reservas/reservar.php?libro_id=<?php echo urlencode($l["id"]); ?>">
+                                            href="<?php echo APP_URL; ?>/reservas/reservar.php?libro_id=<?php echo urlencode($l["id"]); ?>">
                                             Reservar
                                         </a>
                                     <?php endif; ?>
@@ -141,10 +146,10 @@ $esAdmin = (($_SESSION["perfil"] ?? "") === "ADMIN");
                                     <!-- Solo ADMIN -->
                                     <?php if ($esAdmin): ?>
                                         <a class="btn btn-sm btn-outline-primary"
-                                           href="<?php echo APP_URL; ?>/libros/editar.php?id=<?php echo urlencode($l["id"]); ?>">Editar</a>
+                                            href="<?php echo APP_URL; ?>/libros/editar.php?id=<?php echo urlencode($l["id"]); ?>">Editar</a>
 
                                         <a class="btn btn-sm btn-outline-danger"
-                                           href="<?php echo APP_URL; ?>/libros/eliminar.php?id=<?php echo urlencode($l["id"]); ?>">Eliminar</a>
+                                            href="<?php echo APP_URL; ?>/libros/eliminar.php?id=<?php echo urlencode($l["id"]); ?>">Eliminar</a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
