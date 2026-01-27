@@ -35,6 +35,16 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo APP_URL; ?>/perfil.php">Mi perfil</a>
                 </li>
+
+                <?php if (($_SESSION["perfil"] ?? "") === "ADMIN"): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo APP_URL; ?>/log/index.php">
+                            Log de actividad
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+
             </ul>
 
             <div class="d-flex align-items-center gap-3 text-white">
