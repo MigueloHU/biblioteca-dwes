@@ -10,7 +10,7 @@ if ($id <= 0) {
     exit;
 }
 
-// POST -> devolver
+// POST devolver
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $idPost = (int)($_POST["id"] ?? 0);
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     try {
         $pdo->beginTransaction();
 
-        // 1) Obtener préstamo
+        // Obtener préstamo
         $sqlP = "SELECT id, libro_id, estado
                  FROM prestamos
                  WHERE id = :id
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $libroId = (int)$prestamo["libro_id"];
 
-        // 2) Marcar préstamo como DEVUELTO
+        // Marcar préstamo como DEVUELTO
         $sqlU = "UPDATE prestamos
                  SET estado = 'DEVUELTO',
                      fecha_fin = NOW()
@@ -54,8 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt = $pdo->prepare($sqlU);
         $stmt->execute([":id" => $idPost]);
 
-        // 3) Coherencia: poner libro DISPONIBLE
-        // (Solo si ya no existe ningún préstamo ACTIVO para ese libro)
+        // Poner libro DISPONIBLE
         $sqlActivo = "SELECT COUNT(*)
                       FROM prestamos
                       WHERE libro_id = :libro_id AND estado = 'ACTIVO'";
@@ -85,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// GET -> mostrar confirmación
+// GET, mostrar confirmación
 $sql = "SELECT p.id, p.estado, p.fecha_inicio,
                l.titulo, l.autor
         FROM prestamos p

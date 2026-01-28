@@ -10,7 +10,7 @@ if ($id <= 0 || $id === 1) {
     exit;
 }
 
-// POST -> activar
+// POST,activar
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $idPost = (int)($_POST["id"] ?? 0);
@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-// GET -> cargar datos y mostrar confirmación
+// GET, cargar datos y mostrar confirmación
 $sql = "SELECT id, apellido1, apellido2, nombre, email, estado
         FROM profesores
         WHERE id = :id

@@ -34,7 +34,7 @@ $pdf->SetFont("Arial", "B", 14);
 $pdf->Cell(0, 10, pdf_txt("Listado de Libros - Biblioteca"), 0, 1, "C");
 $pdf->Ln(4);
 
-// --- Anchos (suman 190mm aprox, que cabe en A4 con márgenes por defecto)
+// --- Anchos
 $wIsbn = 28;
 $wTitulo = 62;
 $wAutor = 38;
@@ -60,7 +60,7 @@ foreach ($libros as $l) {
     $autor = (string)$l["autor"];
     $editorial = (string)($l["editorial"] ?? "");
 
-    // Precio compacto (sin símbolo € si quieres aún más compacto)
+    // Precio compacto
     if ($l["precio"] === null) {
         $precio = "-";
     } else {

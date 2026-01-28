@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-// Recogida de datos (sanear/trimear)
+// Recogida de datos
 $isbn = trim($_POST["isbn"] ?? "");
 $ejemplar = (int)($_POST["ejemplar"] ?? 1);
 $portada = trim($_POST["portada"] ?? "");
@@ -21,7 +21,7 @@ $fecha_publicacion = trim($_POST["fecha_publicacion"] ?? "");
 $editorial = trim($_POST["editorial"] ?? "");
 $descripcion = trim($_POST["descripcion"] ?? "");
 
-// Precio: si viene vacío -> NULL
+// Precio: si viene vacío, NULL
 $precio = null;
 if (isset($_POST["precio"]) && $_POST["precio"] !== "") {
     $precio = (float)$_POST["precio"];
@@ -33,13 +33,13 @@ if ($isbn === "" || $titulo === "" || $autor === "" || $ejemplar <= 0) {
     exit;
 }
 
-// Validación ISBN (simple): solo permitir letras/números/guiones (opcional)
+// Validación ISBN
 if (!preg_match("/^[0-9A-Za-z\-]+$/", $isbn)) {
     header("Location: " . APP_URL . "/libros/crear.php?error=1");
     exit;
 }
 
-// Validación fecha mm/aaaa (si se ha introducido)
+// Validación fecha mm/aaaa
 if ($fecha_publicacion !== "") {
     if (!preg_match("/^(0[1-9]|1[0-2])\/\d{4}$/", $fecha_publicacion)) {
         header("Location: " . APP_URL . "/libros/crear.php?error=1");
@@ -77,7 +77,6 @@ try {
     exit;
     
 } catch (PDOException $e) {
-    // Por ejemplo, si se repite (isbn, ejemplar) por la UNIQUE KEY
     header("Location: " . APP_URL . "/libros/crear.php?error=1");
     exit;
 }

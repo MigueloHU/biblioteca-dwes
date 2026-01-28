@@ -1,5 +1,4 @@
 <?php
-// config/log.php
 
 function registrar_log(PDO $pdo, string $tipo, string $tabla, ?int $registroId, int $profesorId, ?string $descripcion = null): void
 {

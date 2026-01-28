@@ -4,7 +4,7 @@ require_once __DIR__ . "/../includes/auth.php";
 require_once __DIR__ . "/../config/conexion.php";
 require_once __DIR__ . "/../includes/header.php";
 
-// Listar préstamos (por ahora todos)
+// Listar préstamos
 $sql = "SELECT p.id, p.fecha_inicio, p.fecha_fin, p.estado,
                l.titulo, l.autor,
                pr.email

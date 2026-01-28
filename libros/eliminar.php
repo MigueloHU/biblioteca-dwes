@@ -13,7 +13,7 @@ if ($id <= 0) {
     exit;
 }
 
-// Si viene por POST → borrar
+// Si viene por POST se borra
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $idPost = (int)($_POST["id"] ?? 0);
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     exit;
 }
 
-// Si es GET → cargar datos del libro para confirmar
+// Si es GET se cargan datos del libro para confirmar
 $sql = "SELECT titulo, autor FROM libros WHERE id = :id LIMIT 1";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([":id" => $id]);

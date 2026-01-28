@@ -3,7 +3,7 @@ require_once __DIR__ . "/../config/config.php";
 require_once __DIR__ . "/../includes/admin.php";
 require_once __DIR__ . "/../config/conexion.php";
 
-// Cargar autoload de Composer (PhpSpreadsheet)
+// Cargar autoload de composer
 require_once __DIR__ . "/../vendor/autoload.php";
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -37,10 +37,10 @@ try {
         exit;
     }
 
-    // --- Cabeceras (fila 1) ---
-    // Esperamos nombres tipo: id, apellido1, apellido2, nombre, email, perfil, avatar, estado
+    // Cabeceras de la fila 1
+
     $header = $rows[1];
-    $map = []; // "id" => "A", "apellido1" => "B", ...
+    $map = []; // "id" = "A", "apellido1" = "B", ...
 
     foreach ($header as $col => $name) {
         $k = strtolower(trim((string)$name));
@@ -67,7 +67,7 @@ try {
 
     $pdo->beginTransaction();
 
-    // Preparar queries
+    // Preparar las queries
     $sqlExisteEmail = "SELECT id FROM profesores WHERE email = :email LIMIT 1";
     $stmtExiste = $pdo->prepare($sqlExisteEmail);
 
@@ -85,13 +85,13 @@ try {
                   WHERE id = :id";
     $stmtUpdate = $pdo->prepare($sqlUpdate);
 
-    // Recorremos desde la fila 2
+    // Recorre desde la fila 2
     for ($i = 2; $i <= count($rows); $i++) {
         $r = $rows[$i];
 
         $idExcel = $colId ? (int)trim((string)($r[$colId] ?? "")) : 0;
 
-        // Nunca tocar el admin id=1
+        // Nunca toca el admin id=1
         if ($idExcel === 1) {
             $saltados++;
             continue;
@@ -118,7 +118,7 @@ try {
         $perfil = ($perfilRaw === "ADMIN") ? "ADMIN" : "PROFESOR";
         $estado = ($estadoRaw === "0" || strtoupper($estadoRaw) === "INACTIVO") ? 0 : 1;
 
-        // ¿Existe por email?
+        // Existe por mail?
         $stmtExiste->execute([":email" => $email]);
         $existe = $stmtExiste->fetch();
 
@@ -140,7 +140,7 @@ try {
             ]);
             $actualizados++;
         } else {
-            // Password por defecto para importados (puedes cambiarlo)
+            // Password por defecto cuando se importa el excel
             $passwordDefecto = "profe";
 
             $stmtInsert->execute([
@@ -159,7 +159,6 @@ try {
 
     $pdo->commit();
 
-    // Si quieres, puedes pasar resumen por GET, pero de momento redirigimos simple.
     header("Location: " . APP_URL . "/profesores/index.php?ok=1");
     exit;
 
